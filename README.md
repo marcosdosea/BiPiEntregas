@@ -1,155 +1,53 @@
-# BiPi Entregas 🛵📦
+# BiPi Entregas
+Solicitação, intermediação e acompanhamento de entregas intermunicipais em um só lugar.
 
-> **BIPOU, CHEGOUUU!** — Sistema de gestão de entregas intermunicipais sob demanda.
-
-O **BiPi Entregas** é um aplicativo móvel de logística sob demanda que conecta pessoas e lojistas que precisam **enviar ou receber encomendas** a **entregadores cadastrados e auditados**, com cálculo automático de frete, pagamento via Pix ou Cartão de Crédito e acompanhamento da entrega em tempo real.
-
----
-
-## 📌 Contexto e problema
-
-Segundo dados da ANTT, Sergipe registrou cerca de **89.900 operações de transporte de carga intermunicipais** somente em março de 2026. Apesar do volume, pequenas entregas entre cidades ainda dependem de soluções informais (contatos pessoais, topics, táxis, vans e cooperativas), sem padronização, rastreabilidade ou segurança jurídica. A informalidade no setor de fretes representa cerca de **43% do mercado nacional**, com perdas estimadas em **R$ 32 bilhões** em arrecadação tributária.
-
-O BiPi Entregas propõe uma solução digital que estrutura essa intermediação, com mais **previsibilidade, rastreabilidade e confiabilidade**.
+## Sumário
+1. [O Problema](#1-o-problema)
+2. [A Solução](#2-a-solução)
+3. [Público-Alvo](#3-público-alvo)
+4. [Links Úteis](#4-links-úteis)
+5. [Equipe](#5-equipe)
 
 ---
 
-## 👥 Perfis de usuário
+## 1. O Problema
+O setor de transporte de cargas e encomendas em Sergipe movimenta um alto volume de viagens diariamente: segundo dados da ANTT, o estado registrou cerca de 89.900 operações intermunicipais somente em março de 2026. Apesar dessa demanda, o envio de pequenas encomendas entre cidades ainda depende de soluções informais, burocráticas e pouco digitalizadas.
 
-| Perfil | O que faz |
-|---|---|
-| **Solicitante** | Lojista ou pessoa física que solicita o envio (*Enviar*) ou o recebimento (*Receber*) de uma encomenda, paga e acompanha a entrega. |
-| **Entregador** | Motorista parceiro auditado que aceita pedidos, coleta, transporta e finaliza entregas, recebendo o valor líquido em sua carteira. |
-| **Administrador** | Colaborador da plataforma que audita documentos e aprova ou rejeita cadastros. |
+Para enviar um pacote de um município a outro, pessoas físicas e pequenos lojistas costumam recorrer a contatos pessoais, motoristas de vans, topics, táxis ou cooperativas locais. Toda a combinação de preços, horários e locais de coleta é feita de forma fragmentada por mensagens ou ligações, sem padronização de valores, confirmação formal ou garantia de entrega.
 
-> Um mesmo usuário pode acumular os perfis de Solicitante e Entregador e alternar entre eles sem novo login.
+Essa informalidade — que representa cerca de 43% do mercado nacional de fretes — torna o processo inseguro, dificulta o rastreamento do pacote em trânsito e gera falta de previsibilidade tanto para quem envia quanto para quem transporta.
 
----
+## 2. A Solução
+O **BiPi Entregas** é uma plataforma móvel de logística sob demanda que estrutura e centraliza todas as etapas de uma entrega intermunicipal:
 
-## ✨ Funcionalidades
+- **Solicitação de entregas (Enviar e Receber):** solicitantes informam os endereços de origem e destino, detalhes da embalagem (descrição, dimensões, peso, fragilidade e foto) e visualizam o cálculo automático do frete e do tempo estimado.
+- **Pagamento integrado com custódia:** o pagamento é realizado pelo aplicativo via Pix, Cartão de Crédito, ficando retido com segurança até a conclusão do serviço.
+- **Radar de rotas e aceite de corridas:** entregadores parceiros visualizam as solicitações disponíveis, aceitam múltiplas entregas e contam com roteirização otimizada de coleta e destino.
+- **Acompanhamento da embalagem e avaliação:** o solicitante acompanha cada etapa da entrega (aguardando coleta, coletado, em transporte e entregue), pode reportar ocorrências e avalia o entregador ao final do percurso.
+- **Gestão de ganhos e histórico:** consulta detalhada de entregas realizadas, valores gastos ou recebidos e solicitação de repasse para a conta bancária do entregador.
+- **Validação de cadastros:** um administrador revisa e audita a documentação de entregadores (CNH e documento do veículo) e solicitantes antes de liberar a atuação na plataforma, garantindo a segurança jurídica e operacional.
 
-### 🔐 Autenticação e cadastro
-- Login com e-mail e senha ou **Google OAuth**
-- Recuperação de senha
-- Cadastro de Solicitante (dados pessoais, endereço e foto da fachada)
-- Cadastro de Entregador (CNH, documento do veículo e dados bancários) com 
+Diferente das combinações informais por aplicativos de mensagens, o BiPi Entregas acompanha a operação ponta a ponta, desde a cotação do frete até a confirmação de recebimento no destino e repasse financeiro ao motorista.
 
-### 📦 Solicitante
-- Solicitar entrega nas modalidades **Enviar** e **Receber**
-- Informar endereços, foto, descrição, valor declarado, tamanho, peso e fragilidade
-- Cálculo automático de distância, tempo estimado e frete
-- Pagamento via **Cartão de Crédito** ou **Pix**, com valor retido em custódia até o aceite
-- Gerenciamento de métodos de pagamento (adicionar, definir padrão e remover)
-- Acompanhamento em tempo real com linha do tempo da entrega
-- Contato direto com o entregador e **avaliação de 1 a 5 estrelas**
-- Histórico de entregas e total gasto
+## 3. Público-Alvo
+- **Lojistas e Comerciantes:** pequenos e médios negócios que precisam despachar mercadorias e produtos regularmente para clientes em cidades vizinhas.
+- **Pessoas Físicas (Solicitantes):** usuários que necessitam enviar ou receber encomendas, documentos e objetos pessoais entre municípios com rapidez e rastreabilidade.
+- **Entregadores Autônomos:** motoristas e motociclistas possuidores de CNH e veículo regularizado que desejam rentabilizar seus deslocamentos intermunicipais realizando entregas sob demanda.
 
-### 🏍️ Entregador
-- Modo **online** e radar de entregas disponíveis
-- Aceite de **múltiplas entregas**, com bloqueio automático para os demais entregadores
-- **Rota de coleta otimizada** entre os pontos aceitos
-- Cancelamento gratuito dentro da janela de tolerância (bloqueado após iniciar a rota)
-- Atualização das etapas: coleta concluída → transporte → entrega finalizada
-- Painel de **ganhos** com saldo, gráfico semanal e saque para conta bancária
+## 4. Links Úteis
+- [Documento de Visão](./DocumentoVisao/)
+- [Casos de Uso, Dicionário de Dados, Glossário e Regras de Negócio](./CasosDeUso/)
+- [Protótipos de Baixa e Alta Fidelidade](./Prototipos/)
+- [Diagramas UML e Modelo de Domínio (StarUML)](./AnaliseProjeto/BiPi%20Entregas.mdj)
+- [Processos de Negócio (BPMN)](./BPMN/)
 
-### 🛡️ Administrador
-- Dashboard com indicadores de cadastros pendentes, aprovados, rejeitados e aguardando documentos
-- Fila de cadastros pendentes com busca e filtros
-- Aprovação ou rejeição com registro do motivo e notificação ao usuário
+## 5. Equipe
 
----
-
-## 🔄 Ciclo de vida da solicitação
-
-```
-AguardandoPagamento → BuscandoEntregador → AguardandoColeta → Coletando → Transportando → Entregue
-                              ↑                    │
-                              └── cancelamento do entregador (dentro da janela gratuita)
-
-Cancelada ← cancelamento do Solicitante (antes do aceite) ou do Entregador (fora da janela)
-```
-
-Regras importantes:
-- Apenas **um entregador** pode aceitar cada solicitação.
-- O entregador pode cancelar enquanto o pedido estiver em **"aceitos"**; após **iniciar a rota de coleta**, o cancelamento é bloqueado.
-- Ao concluir a entrega, o solicitante avalia o serviço e o valor líquido é creditado ao entregador.
-
----
-
-## 🧩 Casos de uso
-
-| Código | Caso de uso | Ator principal |
-|---|---|---|
-| CSU01 | Manter Solicitação de Entrega | Solicitante |
-| CSU02 | Autenticar Usuário | Todos |
-| CSU03 | Manter Solicitante | Solicitante |
-| CSU04 | Gerenciar Métodos de Pagamento | Solicitante |
-| CSU05 | Acompanhar Entrega | Solicitante |
-| CSU06 | Consultar Histórico | Solicitante / Entregador |
-| CSU07 | Alternar Perfil | Solicitante / Entregador |
-| CSU08 | Manter Entregador | Entregador |
-| CSU09 | Atender Solicitação de Entrega | Entregador |
-| CSU10 | Validar Cadastros Pendentes | Administrador |
-
-**Atores secundários:** Gateway de Pagamento, Serviço GPS/Mapas e Google OAuth.
-
----
-
-## 🗄️ Modelo de dados
-
-Principais entidades do DER:
-
-- **Usuario** (generalização) → **Solicitante**, **Entregador** e **Administrador**
-- **MetodoPagamento** (generalização) → **CartaoCredito** e **Pix**
-- **SolicitacaoEntrega**
-- **Pagamento**
-- **DadosBancarios**
-
----
-
-## 📚 Documentação do projeto
-
-| Artefato | Descrição |
-|---|---|
-| Documento de Visão (v1.5) | Posicionamento, stakeholders, requisitos funcionais e não funcionais, diagrama de casos de uso e máquina de estados |
-| Especificação de Casos de Uso | CSU01 a CSU10 com fluxos principais, alternativos e de exceção |
-| BPMN | Fluxos do solicitante, aceitação pelo entregador e execução da entrega |
-| DER | Modelagem de dados (StarUML) |
-
-> 💡 Sugestão: adicione os arquivos em uma pasta `docs/` e atualize os links desta tabela.
-
----
-
-## 🛠️ Tecnologias
-
-> _Preencha de acordo com a stack adotada pela equipe (aplicativo móvel, back-end, banco de dados, integrações)._
-
-**Integrações previstas:** Google OAuth, serviço de mapas/GPS e gateway de pagamento (cartão e Pix).
-
----
-
-## 🚀 Como executar
-
-```bash
-# Clone o repositório
-git clone https://github.com/<usuario>/BiPiEntregas.git
-cd BiPiEntregas
-
-# Instruções de instalação e execução conforme a stack do projeto
-```
-
----
-
-## 👨‍💻 Equipe
-
-- Igor Augusto
-- Anderson Andrade
-- Clara Prado
-- Victor Pereira
-- Caio Fidelis
-
----
-
-## 📄 Licença
-
-Este projeto está licenciado sob a licença **MIT**. Consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
+| Nome | Função |
+| :--- | :--- |
+| Anderson Andrade | Desenvolvedor |
+| Caio Fidelis | Desenvolvedor |
+| Clara Prado | Desenvolvedora |
+| Igor Augusto | Desenvolvedor |
+| Victor Pereira | Desenvolvedor |
+| Marcos Dósea | Product Owner |
