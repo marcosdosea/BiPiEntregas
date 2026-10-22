@@ -21,7 +21,7 @@ Essa informalidade — que representa cerca de 43% do mercado nacional de fretes
 O **BiPi Entregas** é uma plataforma móvel de logística sob demanda que estrutura e centraliza todas as etapas de uma entrega intermunicipal:
 
 - **Solicitação de entregas (Enviar e Receber):** solicitantes informam os endereços de origem e destino, detalhes da embalagem (descrição, dimensões, peso, fragilidade e foto) e visualizam o cálculo automático do frete e do tempo estimado.
-- **Pagamento integrado com custódia:** o pagamento é realizado pelo aplicativo via Pix, Cartão de Crédito, ficando retido com segurança até a conclusão do serviço.
+- **Pagamento integrado com custódia:** o pagamento é realizado pelo aplicativo via Pix ou Cartão de Crédito, ficando retido com segurança até a conclusão do serviço.
 - **Radar de rotas e aceite de corridas:** entregadores parceiros visualizam as solicitações disponíveis, aceitam múltiplas entregas e contam com roteirização otimizada de coleta e destino.
 - **Acompanhamento da embalagem e avaliação:** o solicitante acompanha cada etapa da entrega (aguardando coleta, coletado, em transporte e entregue), pode reportar ocorrências e avalia o entregador ao final do percurso.
 - **Gestão de ganhos e histórico:** consulta detalhada de entregas realizadas, valores gastos ou recebidos e solicitação de repasse para a conta bancária do entregador.
@@ -35,11 +35,11 @@ Diferente das combinações informais por aplicativos de mensagens, o BiPi Entre
 - **Entregadores Autônomos:** motoristas e motociclistas possuidores de CNH e veículo regularizado que desejam rentabilizar seus deslocamentos intermunicipais realizando entregas sob demanda.
 
 ## 4. Links Úteis
-- [Documento de Visão](./DocumentoVisao/)
-- [Casos de Uso, Dicionário de Dados, Glossário e Regras de Negócio](./CasosDeUso/)
-- [Protótipos de Baixa e Alta Fidelidade](./Prototipos/)
-- [Diagramas UML e Modelo de Domínio (StarUML)](./AnaliseProjeto/BiPi%20Entregas.mdj)
-- [Processos de Negócio (BPMN)](./BPMN/)
+- [Documento de Visão](https://github.com/marcosdosea/BiPiEntregas/tree/main/Gerenciamento)
+- [Casos de Uso, Dicionário de Dados, Glossário e Regras de Negócio](https://github.com/marcosdosea/BiPiEntregas/tree/main/Requisitos)
+- [Protótipos de Baixa e Alta Fidelidade](https://github.com/marcosdosea/BiPiEntregas/tree/main/Requisitos)
+- [Diagramas UML e Modelo de Domínio (StarUML)](https://github.com/marcosdosea/BiPiEntregas/blob/main/AnaliseProjeto/BiPi%20Entregas.mdj)
+- [Processos de Negócio (BPMN)](https://github.com/marcosdosea/BiPiEntregas/tree/main/ProcessosNegocio)
 
 ## 5. Equipe
 
