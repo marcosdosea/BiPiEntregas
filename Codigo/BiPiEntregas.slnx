@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="BipiEntregasWeb/BipiEntregasWeb.csproj" />
+  <Project Path="Core/Core.csproj" />
+</Solution>
