@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="BipiEntregasWeb/BipiEntregasWeb.csproj" />
+  <Project Path="BiPiEntregasWebTests/BiPiEntregasWebTests.csproj" Id="4b37c7a6-8471-4df1-b81b-2aa91d186d41" />
   <Project Path="Core/Core.csproj" />
   <Project Path="Service/Service.csproj" Id="9d381b75-8231-4392-b24e-70ba8d22773b" />
+  <Project Path="ServiceTests/ServiceTests.csproj" Id="424fae32-fe3d-481c-abc3-087137804772" />
 </Solution>
