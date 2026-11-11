@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Core;
 using Core.Service;
-using Service;  
-
+using Service;
 
 
 var builder = WebApplication.CreateBuilder(args);
