@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Core;
 using BipiEntregasWeb.Models;
 
 namespace BipiEntregasWeb.Mappers
@@ -8,8 +7,15 @@ namespace BipiEntregasWeb.Mappers
     {
         public EntregadorMapper()
         {
-            CreateMap<EntregadorViewModel, Pessoa>()
-                .ReverseMap();
+            CreateMap<EntregadorViewModel, Core.Pessoa>()
+                .ForMember(
+                    dest => dest.DocumentoVeiculo,
+                    opt => opt.Ignore());
+
+            CreateMap<Core.Pessoa, EntregadorViewModel>()
+                .ForMember(
+                    dest => dest.DocumentoVeiculo,
+                    opt => opt.Ignore());
         }
     }
 }
