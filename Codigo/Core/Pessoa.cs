@@ -37,11 +37,6 @@ public partial class Pessoa
 
     public byte[]? DocumentoVeiculo { get; set; }
 
-    /// <summary>
-    /// A - ATIVO
-    /// I - INATIVO
-    /// P - PENDENTE
-    /// </summary>
     public string Status { get; set; } = null!;
 
     /// <summary>

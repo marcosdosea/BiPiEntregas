@@ -21,7 +21,7 @@ public partial class Dadosbancario
 
     public string TipoConta { get; set; } = null!;
 
-    public int IdPessoa { get; set; }
+    public uint IdPessoa { get; set; }
 
     public int IdBanco { get; set; }
 
