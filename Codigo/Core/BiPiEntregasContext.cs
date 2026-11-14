@@ -29,7 +29,7 @@ public partial class BiPiEntregasContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseMySQL("server=localhost;port=3306;user=root;password=261984M@io;database=BiPiEntregas");
+        => optionsBuilder.UseMySQL("server=localhost;port=3306;user=root;password=123456;database=BiPiEntregas");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -130,21 +130,20 @@ public partial class BiPiEntregasContext : DbContext
 
             entity.ToTable("pagamento");
 
-            entity.HasIndex(e => e.IdSolicitacaoEntrega, "fk_Pagamento_SolicitacaoEntrega1_idx");
-
-            entity.HasIndex(e => e.Id, "id_UNIQUE").IsUnique();
+            entity.HasIndex(e => e.IdSolicitacaoEntrega, "ix_pagamento_solicitacao");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.DataEstorno)
+                .HasColumnType("datetime")
+                .HasColumnName("dataEstorno");
             entity.Property(e => e.DataPagamento)
-                .HasColumnType("date")
+                .HasColumnType("datetime")
                 .HasColumnName("dataPagamento");
             entity.Property(e => e.IdSolicitacaoEntrega).HasColumnName("idSolicitacaoEntrega");
             entity.Property(e => e.Status)
-                .HasComment("PENDENTE = P\nAPROVADO = A\nRECUSADO = R")
-                .HasColumnType("enum('P','A','R')")
+                .HasColumnType("enum('P','A','R','E')")
                 .HasColumnName("status");
             entity.Property(e => e.Tipo)
-                .HasComment("PIX = P\nCARTÃO DE CREDITO = A")
                 .HasColumnType("enum('P','C')")
                 .HasColumnName("tipo");
             entity.Property(e => e.Valor)
@@ -153,8 +152,8 @@ public partial class BiPiEntregasContext : DbContext
 
             entity.HasOne(d => d.IdSolicitacaoEntregaNavigation).WithMany(p => p.Pagamentos)
                 .HasForeignKey(d => d.IdSolicitacaoEntrega)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_Pagamento_SolicitacaoEntrega1");
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_pagamento_solicitacao");
         });
 
         modelBuilder.Entity<Pessoa>(entity =>
@@ -163,13 +162,13 @@ public partial class BiPiEntregasContext : DbContext
 
             entity.ToTable("pessoa");
 
-            entity.HasIndex(e => e.Cpf, "cpf_UNIQUE").IsUnique();
+            entity.HasIndex(e => e.Cpf, "uq_pessoa_cpf").IsUnique();
 
-            entity.HasIndex(e => e.Email, "email_UNIQUE").IsUnique();
+            entity.HasIndex(e => e.Email, "uq_pessoa_email").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Cep)
-                .HasMaxLength(9)
+                .HasMaxLength(8)
                 .IsFixedLength()
                 .HasColumnName("cep");
             entity.Property(e => e.Cidade)
@@ -216,7 +215,6 @@ public partial class BiPiEntregasContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("rua");
             entity.Property(e => e.Status)
-                .HasComment("A - ATIVO\nI - INATIVO\nP - PENDENTE")
                 .HasColumnType("enum('A','I','P')")
                 .HasColumnName("status");
             entity.Property(e => e.Telefone)
@@ -233,9 +231,9 @@ public partial class BiPiEntregasContext : DbContext
 
             entity.ToTable("solicitacaoentrega");
 
-            entity.HasIndex(e => e.IdSolicitante, "fk_SolicitacaoEntrega_Pessoa1_idx");
+            entity.HasIndex(e => e.IdEntregador, "ix_solicitacao_entregador");
 
-            entity.HasIndex(e => e.IdEntregador, "fk_SolicitacaoEntrega_Pessoa2_idx");
+            entity.HasIndex(e => e.IdSolicitante, "ix_solicitacao_solicitante");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.BairroDestino)
@@ -259,14 +257,14 @@ public partial class BiPiEntregasContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("cidadeOrigem");
             entity.Property(e => e.DataCriacao)
-                .HasColumnType("date")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("datetime")
                 .HasColumnName("dataCriacao");
             entity.Property(e => e.DescricaoItem)
                 .HasMaxLength(255)
                 .HasColumnName("descricaoItem");
             entity.Property(e => e.Dimensoes)
                 .HasMaxLength(30)
-                .IsFixedLength()
                 .HasColumnName("dimensoes");
             entity.Property(e => e.IdEntregador).HasColumnName("idEntregador");
             entity.Property(e => e.IdSolicitante).HasColumnName("idSolicitante");
@@ -276,7 +274,9 @@ public partial class BiPiEntregasContext : DbContext
             entity.Property(e => e.NumeroOrigem)
                 .HasMaxLength(100)
                 .HasColumnName("numeroOrigem");
-            entity.Property(e => e.Peso).HasColumnName("peso");
+            entity.Property(e => e.Peso)
+                .HasPrecision(8)
+                .HasColumnName("peso");
             entity.Property(e => e.RuaDestino)
                 .HasMaxLength(100)
                 .HasColumnName("ruaDestino");
@@ -292,12 +292,13 @@ public partial class BiPiEntregasContext : DbContext
 
             entity.HasOne(d => d.IdEntregadorNavigation).WithMany(p => p.SolicitacaoentregaIdEntregadorNavigations)
                 .HasForeignKey(d => d.IdEntregador)
-                .HasConstraintName("fk_SolicitacaoEntrega_Pessoa2");
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_solicitacao_entregador");
 
             entity.HasOne(d => d.IdSolicitanteNavigation).WithMany(p => p.SolicitacaoentregaIdSolicitanteNavigations)
                 .HasForeignKey(d => d.IdSolicitante)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_SolicitacaoEntrega_Pessoa1");
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_solicitacao_solicitante");
         });
 
         OnModelCreatingPartial(modelBuilder);

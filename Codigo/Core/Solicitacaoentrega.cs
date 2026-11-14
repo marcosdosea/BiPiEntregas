@@ -13,9 +13,9 @@ public partial class Solicitacaoentrega
 
     public string DescricaoItem { get; set; } = null!;
 
-    public double Peso { get; set; }
+    public decimal Peso { get; set; }
 
-    public string? Dimensoes { get; set; }
+    public string Dimensoes { get; set; } = null!;
 
     public decimal ValorFrete { get; set; }
 
@@ -39,9 +39,9 @@ public partial class Solicitacaoentrega
 
     public string CepDestino { get; set; } = null!;
 
-    public int IdSolicitante { get; set; }
+    public uint IdSolicitante { get; set; }
 
-    public int? IdEntregador { get; set; }
+    public uint? IdEntregador { get; set; }
 
     public virtual Pessoa? IdEntregadorNavigation { get; set; }
 

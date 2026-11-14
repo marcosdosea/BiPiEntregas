@@ -21,7 +21,7 @@ public partial class Cartaocredito
     /// </summary>
     public string TipoCartao { get; set; } = null!;
 
-    public int IdPessoa { get; set; }
+    public uint IdPessoa { get; set; }
 
     public virtual Pessoa IdPessoaNavigation { get; set; } = null!;
 }
