@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Core.Service
 {
-    internal interface ISolicitacaoEntregaService
+    public interface ISolicitacaoEntregaService
     {
         uint Create(Solicitacaoentrega solicitacaoEntrega);
         void Edit(Solicitacaoentrega solicitacaoEntrega);
