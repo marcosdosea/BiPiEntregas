@@ -1,7 +1,16 @@
+
+using Core;
+using Core.Service;
+using Service;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<BiPiEntregasContext>();
+builder.Services.AddTransient<IPessoaService, PessoaService>();
+builder.Services.AddAutoMapper(cfg => { }, typeof(Program).Assembly);
+
 
 var app = builder.Build();
 
@@ -23,7 +32,4 @@ app.MapStaticAssets();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
-
-app.Run();
+    .WithStaticAssets();app.Run();
