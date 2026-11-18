@@ -1,0 +1,85 @@
+﻿@model IEnumerable<BipiEntregasWeb.Models.SolicitacaoEntregaViewModel>
+
+@{
+    ViewData["Title"] = "Solicitações de Entrega";
+}
+
+<h1>Solicitações de Entrega</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Nova Solicitação</a>
+</p>
+
+<div class="row text-center mb-4">
+    <div class="col-md-4">
+        <div class="border p-3">
+            <h3>@Model.Count()</h3>
+            <span>Total</span>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="border p-3">
+            <h3>@Model.Count(s => s.Status == "EM_ANDAMENTO")</h3>
+            <span>Em rota</span>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="border p-3">
+            <h3>@Model.Count(s => s.Status == "CONCLUIDA")</h3>
+            <span>Entregues</span>
+        </div>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Origem</th>
+            <th>Destino</th>
+            <th>
+                @Html.DisplayNameFor(model => model.DescricaoItem)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ValorFrete)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    BIP-@item.Id
+                </td>
+                <td>
+                    @item.RuaOrigem, @item.NumeroOrigem — @item.BairroOrigem, @item.CidadeOrigem
+                </td>
+                <td>
+                    @item.RuaDestino, @item.NumeroDestino — @item.BairroDestino, @item.CidadeDestino
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.DescricaoItem)
+                </td>
+                <td>
+                    @item.ValorFrete.ToString("C")
+                </td>
+                <td>
+                    @(item.Status == "PENDENTE" ? "Aguardando Entregador" :
+                      item.Status == "EM_ANDAMENTO" ? "Em rota de entrega" :
+                      item.Status == "CONCLUIDA" ? "Entregue" :
+                      item.Status == "CANCELADA" ? "Cancelada" : "Desconhecido")
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Ver detalhes</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Cancelar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
