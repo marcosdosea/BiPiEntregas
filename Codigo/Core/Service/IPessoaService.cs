@@ -13,5 +13,8 @@ namespace Core.Service
         IEnumerable<Pessoa> GetAll();
         IEnumerable<Pessoa> GetAll(string status);
         void Activate(uint id);
+
+        void ApproveRegistration(uint id);
+        void RejectRegistration(uint id, string motivo);
     }
 }
