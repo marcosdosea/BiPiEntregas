@@ -1,0 +1,90 @@
+﻿{
+@model IReadOnlyList<BipiEntregasWeb.Models.CadastrosPendentesViewModel>
+
+@{
+    ViewData["Title"] = "Cadastros Pendentes";
+}
+
+<h1>Cadastros Pendentes</h1>
+
+@if (TempData["Sucesso"] is string sucesso)
+{
+    <div class="alert alert-success">@sucesso</div>
+}
+
+@if (TempData["Erro"] is string erro)
+{
+    <div class="alert alert-danger">@erro</div>
+}
+
+@if (Model.Count == 0)
+{
+    <p>Não há cadastros pendentes.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>E-mail</th>
+                <th>Veículo</th>
+                <th>Placa</th>
+                <th>CNH</th>
+                <th>Documento do veículo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cadastro in Model)
+            {
+                <tr>
+                    <td>@cadastro.Nome</td>
+                    <td>@cadastro.Cpf</td>
+                    <td>@cadastro.Email</td>
+                    <td>@cadastro.Veiculo</td>
+                    <td>@cadastro.Placa</td>
+                    <td>@cadastro.Cnh</td>
+                    <td>
+                        @(cadastro.PossuiDocumentoVeiculo
+                            ? "Enviado"
+                            : "Não enviado")
+                    </td>
+                    <td>
+                        <form asp-action="Aprovar" method="post" class="mb-2">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden"
+                                   name="id"
+                                   value="@cadastro.Id" />
+                            <button type="submit" class="btn btn-success">
+                                Aprovar
+                            </button>
+                        </form>
+
+                        <form asp-action="Rejeitar" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden"
+                                   name="id"
+                                   value="@cadastro.Id" />
+
+                            <label for="motivo-@cadastro.Id">
+                                Motivo da rejeição
+                            </label>
+                            <textarea id="motivo-@cadastro.Id"
+                                      name="Motivo"
+                                      maxlength="500"
+                                      required
+                                      class="form-control"></textarea>
+
+                            <button type="submit"
+                                    class="btn btn-danger mt-2">
+                                Rejeitar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
