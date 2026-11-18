@@ -14,6 +14,8 @@ builder.Services.AddTransient<IPessoaService, PessoaService>();
 builder.Services.AddTransient<ISolicitacaoEntregaService, SolicitacaoEntregaService>();
 builder.Services.AddTransient<ISolicitacaoEntregaService, SolicitacaoEntregaService>();
 builder.Services.AddTransient<IPagamentoService, PagamentoService>();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -26,7 +28,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
+app.UseSession();
 app.UseAuthorization();
 
 app.MapStaticAssets();
