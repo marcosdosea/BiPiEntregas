@@ -1,0 +1,82 @@
+@model BipiEntregasWeb.Models.PessoaViewModel
+
+@{
+    ViewData["Title"] = "Editar Pessoa";
+}
+
+<h1>Editar Pessoa</h1>
+
+<h4>Dados Pessoais</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger"></div>
+
+            <input type="hidden" asp-for="Id" />
+
+            @* CPF e perfil não são alterados na edição,
+               mas precisam voltar no POST para passar na validação. *@
+            <input type="hidden" asp-for="Cpf" />
+            <input type="hidden" asp-for="Papel" />
+
+            <div class="form-group">
+                <label asp-for="Nome" class="control-label"></label>
+                <input asp-for="Nome" class="form-control" />
+                <span asp-validation-for="Nome" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-2">
+                <label asp-for="Cpf" class="control-label"></label>
+                <input value="@Model.Cpf" class="form-control" disabled />
+            </div>
+
+            <div class="form-group mt-2">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-2">
+                <label asp-for="Telefone" class="control-label"></label>
+                <input asp-for="Telefone" class="form-control" />
+                <span asp-validation-for="Telefone" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-2">
+                <label asp-for="DataNascimento" class="control-label"></label>
+                <input asp-for="DataNascimento" class="form-control" />
+                <span asp-validation-for="DataNascimento"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-2">
+                <label asp-for="Papel" class="control-label"></label>
+                <input value="@(Model.Papel == "S" ? "Solicitante" :
+                                Model.Papel == "E" ? "Entregador" :
+                                Model.Papel == "A" ? "Administrador" : "Desconhecido")"
+                       class="form-control" disabled />
+            </div>
+
+            <div class="form-group mt-3">
+                <input type="submit" value="Salvar"
+                       class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Index">Voltar à Lista</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial");
+    }
+}

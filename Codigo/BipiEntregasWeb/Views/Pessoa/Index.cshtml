@@ -1,0 +1,82 @@
+@model IEnumerable<BipiEntregasWeb.Models.PessoaViewModel>
+
+@{
+    ViewData["Title"] = "Pessoas";
+}
+
+<h1>Pessoas</h1>
+
+<p class="text-muted">
+    Pessoas cadastradas na plataforma com o seu perfil
+    (Solicitante, Entregador ou Administrador).
+</p>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Adicionar Pessoa</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cpf)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Telefone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataNascimento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Papel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => item.Nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Cpf)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Telefone)
+                </td>
+                <td>
+                    @item.DataNascimento.ToString("dd/MM/yyyy")
+                </td>
+                <td>
+                    @(item.Papel == "S" ? "Solicitante" :
+                      item.Papel == "E" ? "Entregador" :
+                      item.Papel == "A" ? "Administrador" : "Desconhecido")
+                </td>
+                <td>
+                    @(item.Status == "A" ? "Ativo" :
+                      item.Status == "I" ? "Inativo" :
+                      item.Status == "P" ? "Pendente" : "Desconhecido")
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Desativar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
