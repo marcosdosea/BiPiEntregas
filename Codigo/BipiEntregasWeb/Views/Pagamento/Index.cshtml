@@ -1,0 +1,69 @@
+﻿@model IEnumerable<BipiEntregasWeb.Models.PagamentoViewModel>
+
+@{
+    ViewData["Title"] = "Pagamentos";
+}
+
+<h1>Pagamentos</h1>
+
+<p class="text-muted">
+    O pagamento é vinculado a uma solicitação de entrega e pode ser feito por Cartão ou Pix.
+</p>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Adicionar Pagamento</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IdSolicitacaoEntrega)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tipo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Valor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataPagamento)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    BIP-@item.IdSolicitacaoEntrega
+                </td>
+                <td>
+                    @(item.Tipo == "C" ? "Cartão" :
+                      item.Tipo == "P" ? "Pix" : "Desconhecido")
+                </td>
+                <td>
+                    @item.Valor.ToString("C")
+                </td>
+                <td>
+                    @(item.Status == "P" ? "Pendente" :
+                      item.Status == "A" ? "Aprovado" :
+                      item.Status == "R" ? "Recusado" :
+                      item.Status == "E" ? "Estornado" : "Desconhecido")
+                </td>
+                <td>
+                    @(item.DataPagamento?.ToString("dd/MM/yyyy HH:mm") ?? "-")
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Estornar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
