@@ -1,0 +1,65 @@
+﻿@model BipiEntregasWeb.Models.PagamentoViewModel
+
+@{
+    ViewData["Title"] = "Detalhes do Pagamento";
+}
+
+<h1>Detalhes do Pagamento</h1>
+
+<div>
+    <h4>Dados do Pagamento</h4>
+    <hr />
+
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.IdSolicitacaoEntrega)
+        </dt>
+        <dd class="col-sm-10">
+            BIP-@Model.IdSolicitacaoEntrega
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Valor)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Valor.ToString("C")
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Tipo)
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.Tipo == "C" ? "Cartão" :
+              Model.Tipo == "P" ? "Pix" : "Desconhecido")
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.Status == "P" ? "Pendente" :
+              Model.Status == "A" ? "Aprovado" :
+              Model.Status == "R" ? "Recusado" :
+              Model.Status == "E" ? "Estornado" : "Desconhecido")
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DataPagamento)
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.DataPagamento?.ToString("dd/MM/yyyy HH:mm") ?? "-")
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DataEstorno)
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.DataEstorno?.ToString("dd/MM/yyyy HH:mm") ?? "-")
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Editar</a> |
+    <a asp-action="Index">Voltar à Lista</a>
+</div>
