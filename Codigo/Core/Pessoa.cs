@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 
 namespace Core;
@@ -17,18 +18,20 @@ public partial class Pessoa
 
     public DateTime DataNascimento { get; set; }
 
-    public string Cep { get; set; } = null!;
+   
+    public string? Cep { get; set; }
 
-    public string Cidade { get; set; } = null!;
+    public string? Cidade { get; set; }
 
-    public string Rua { get; set; } = null!;
+    public string? Rua { get; set; }
 
-    public string Numero { get; set; } = null!;
+    public string? Numero { get; set; }
 
     public string? Complemento { get; set; }
 
     public byte[]? FotoResidencia { get; set; }
 
+    
     public string? Veiculo { get; set; }
 
     public string? Placa { get; set; }
@@ -54,3 +57,4 @@ public partial class Pessoa
 
     public virtual ICollection<Solicitacaoentrega> SolicitacaoentregaIdSolicitanteNavigations { get; set; } = new List<Solicitacaoentrega>();
 }
+        
