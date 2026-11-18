@@ -10,7 +10,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<BiPiEntregasContext>();
 builder.Services.AddTransient<IPessoaService, PessoaService>();
 builder.Services.AddAutoMapper(cfg => { }, typeof(Program).Assembly);
-
+builder.Services.AddTransient<IPessoaService, PessoaService>();
+builder.Services.AddTransient<ISolicitacaoEntregaService, SolicitacaoEntregaService>();
 
 var app = builder.Build();
 
