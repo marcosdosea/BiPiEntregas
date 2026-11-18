@@ -193,7 +193,7 @@ public partial class BiPiEntregasContext : DbContext
                 .HasColumnType("date")
                 .HasColumnName("dataNascimento");
             entity.Property(e => e.DocumentoVeiculo)
-                .HasColumnType("blob")
+                .HasColumnType("mediumblob")
                 .HasColumnName("documentoVeiculo");
             entity.Property(e => e.Email)
                 .HasMaxLength(75)
