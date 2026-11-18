@@ -41,6 +41,7 @@ namespace BipiEntregasWeb.Models
         public string? Cnh { get; set; }
 
         [DataType(DataType.Upload)]
+        [Required(ErrorMessage = "Informe o Documento do Veículo.")]
         public IFormFile? DocumentoVeiculo{ get; set; }
 
         public string Status { get; set; } = string.Empty;

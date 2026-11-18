@@ -115,7 +115,7 @@ namespace BipiEntregasWeb.Controllers
                 DocumentoVeiculo = documentoVeiculo,
 
                 Papel = "E",
-                Status = "A"
+                Status = "P"
             };
 
             try
