@@ -12,7 +12,8 @@ builder.Services.AddTransient<IPessoaService, PessoaService>();
 builder.Services.AddAutoMapper(cfg => { }, typeof(Program).Assembly);
 builder.Services.AddTransient<IPessoaService, PessoaService>();
 builder.Services.AddTransient<ISolicitacaoEntregaService, SolicitacaoEntregaService>();
-
+builder.Services.AddTransient<ISolicitacaoEntregaService, SolicitacaoEntregaService>();
+builder.Services.AddTransient<IPagamentoService, PagamentoService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
