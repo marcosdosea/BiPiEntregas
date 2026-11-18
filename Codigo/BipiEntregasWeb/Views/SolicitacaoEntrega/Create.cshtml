@@ -1,0 +1,153 @@
+﻿@model BipiEntregasWeb.Models.SolicitacaoEntregaViewModel
+
+@{
+    ViewData["Title"] = "Nova Solicitação de Entrega";
+}
+
+<h1>Enviar Embalagem</h1>
+
+<h4>Dados da Solicitação</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="IdSolicitante" class="control-label"></label>
+                <input asp-for="IdSolicitante" class="form-control" />
+                <span asp-validation-for="IdSolicitante"
+                      class="text-danger"></span>
+            </div>
+
+            <h5 class="mt-3">Local de Coleta</h5>
+
+            <div class="form-group">
+                <label asp-for="RuaOrigem" class="control-label"></label>
+                <input asp-for="RuaOrigem" class="form-control" />
+                <span asp-validation-for="RuaOrigem"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="NumeroOrigem" class="control-label"></label>
+                <input asp-for="NumeroOrigem" class="form-control" />
+                <span asp-validation-for="NumeroOrigem"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="BairroOrigem" class="control-label"></label>
+                <input asp-for="BairroOrigem" class="form-control" />
+                <span asp-validation-for="BairroOrigem"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CidadeOrigem" class="control-label"></label>
+                <input asp-for="CidadeOrigem" class="form-control" />
+                <span asp-validation-for="CidadeOrigem"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CepOrigem" class="control-label"></label>
+                <input asp-for="CepOrigem" class="form-control" />
+                <span asp-validation-for="CepOrigem"
+                      class="text-danger"></span>
+            </div>
+
+            <h5 class="mt-3">Local de Destino</h5>
+
+            <div class="form-group">
+                <label asp-for="RuaDestino" class="control-label"></label>
+                <input asp-for="RuaDestino" class="form-control" />
+                <span asp-validation-for="RuaDestino"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="NumeroDestino" class="control-label"></label>
+                <input asp-for="NumeroDestino" class="form-control" />
+                <span asp-validation-for="NumeroDestino"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="BairroDestino" class="control-label"></label>
+                <input asp-for="BairroDestino" class="form-control" />
+                <span asp-validation-for="BairroDestino"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CidadeDestino" class="control-label"></label>
+                <input asp-for="CidadeDestino" class="form-control" />
+                <span asp-validation-for="CidadeDestino"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CepDestino" class="control-label"></label>
+                <input asp-for="CepDestino" class="form-control" />
+                <span asp-validation-for="CepDestino"
+                      class="text-danger"></span>
+            </div>
+
+            <h5 class="mt-3">Embalagem</h5>
+
+            <div class="form-group">
+                <label asp-for="DescricaoItem" class="control-label"></label>
+                <input asp-for="DescricaoItem" class="form-control"
+                       placeholder="Ex: Caixa com documentos" />
+                <span asp-validation-for="DescricaoItem"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Dimensoes" class="control-label">Tamanho Aproximado</label>
+                <select asp-for="Dimensoes" class="form-control">
+                    <option value="">-- Selecione --</option>
+                    <option value="Pequeno">Pequeno</option>
+                    <option value="Médio">Médio</option>
+                    <option value="Grande">Grande</option>
+                    <option value="Extra grande">Extra grande</option>
+                </select>
+                <span asp-validation-for="Dimensoes"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Peso" class="control-label"></label>
+                <input asp-for="Peso" class="form-control" step="0.01" />
+                <span asp-validation-for="Peso"
+                      class="text-danger"></span>
+            </div>
+
+            <p class="text-muted mt-2">
+                O valor do frete é calculado automaticamente pelo sistema.
+            </p>
+
+            <div class="form-group mt-3">
+                <input type="submit"
+                       value="Solicitar Entrega"
+                       class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Index">Voltar à Lista</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial");
+    }
+}
