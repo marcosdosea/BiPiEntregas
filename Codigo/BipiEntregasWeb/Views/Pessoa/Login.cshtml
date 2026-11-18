@@ -1,0 +1,55 @@
+@{
+    ViewData["Title"] = "Acessar Conta";
+}
+
+@* Tela_002 - Acessar conta.
+   Após o login, o perfil da pessoa fica guardado na sessão
+   como perfil ativo (usado pelo UC07 - Alternar Perfil). *@
+
+<div class="row justify-content-center">
+    <div class="col-md-4">
+
+        <div class="text-center mb-4">
+            <div class="border d-inline-block px-5 py-2">
+                <div class="fs-3 fw-bold">BiPi°</div>
+                <div class="small fw-bold">ENTREGAS</div>
+            </div>
+            <p class="text-muted mt-2">Bem-vindo ao BiPi</p>
+        </div>
+
+        <form asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="All"
+                 class="text-danger"></div>
+
+            <div class="form-group">
+                <label for="email" class="control-label fw-bold">E-MAIL</label>
+                <input type="email" id="email" name="email"
+                       class="form-control"
+                       placeholder="Digite seu e-mail"
+                       required />
+            </div>
+
+            @* TODO: trocar o CPF pela senha quando existir no banco (CSU02). *@
+            <div class="form-group mt-3">
+                <label for="cpf" class="control-label fw-bold">CPF</label>
+                <input type="password" id="cpf" name="cpf"
+                       class="form-control"
+                       placeholder="Digite seu CPF (somente números)"
+                       maxlength="11"
+                       required />
+            </div>
+
+            <div class="d-grid mt-4">
+                <input type="submit" value="Entrar"
+                       class="btn btn-dark" />
+            </div>
+        </form>
+
+        <p class="text-center text-muted mt-4">
+            Não tem uma conta?
+            <a asp-action="Create" class="fw-bold">Cadastre-se</a>
+        </p>
+    </div>
+</div>
