@@ -40,6 +40,8 @@ public partial class Pessoa
 
     public byte[]? DocumentoVeiculo { get; set; }
 
+    public string? MotivoRejeicao { get; set; }
+
     public string Status { get; set; } = null!;
 
     /// <summary>

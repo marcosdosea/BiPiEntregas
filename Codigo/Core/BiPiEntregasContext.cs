@@ -221,6 +221,9 @@ public partial class BiPiEntregasContext : DbContext
             entity.Property(e => e.Status)
                 .HasColumnType("enum('A','I','P')")
                 .HasColumnName("status");
+            entity.Property(e => e.MotivoRejeicao)
+                .HasMaxLength(500)
+                .HasColumnName("motivoRejeicao");
             entity.Property(e => e.Telefone)
                 .HasMaxLength(11)
                 .HasColumnName("telefone");
