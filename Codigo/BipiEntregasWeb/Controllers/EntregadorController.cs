@@ -1,235 +1,270 @@
-﻿using AutoMapper;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
 using BipiEntregasWeb.Models;
 using Core;
 using Core.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace BipiEntregasWeb.Controllers
 {
     public class EntregadorController : Controller
     {
-
-        // Controller utiliza os métodos do PessoaService para consultar,
-        // cadastrar, editar e desativar pessoas do tipo Entregador (Papel = E).
-        // O Entregador é um usuário que realiza entregas.
-
         private readonly IPessoaService _pessoaService;
         private readonly IMapper _mapper;
 
-        public EntregadorController(
-            IPessoaService pessoaService,
-            IMapper mapper)
+        public EntregadorController(IPessoaService pessoaService, IMapper mapper)
         {
             _pessoaService = pessoaService;
             _mapper = mapper;
         }
 
+        // Compatibilidade: reconhece os cadastros antigos (Papel = E)
+        // e os perfis de entregador da nova tabela pessoaperfil.
+        private static bool PossuiPerfilEntregador(Pessoa pessoa)
+        {
+            return pessoa.Papel == "E" ||
+                   pessoa.PessoaPerfis.Any(perfil => perfil.Papel == "E");
+        }
 
-
-        // GET: EntregadorController
+        // GET: Entregador/Index
         public ActionResult Index()
         {
             var entregadores = _pessoaService.GetAll()
-                .Where(p => p.Papel == "E")
+                .Where(PossuiPerfilEntregador)
                 .ToList();
 
-            var entregadoresViewModel =
-                _mapper.Map<List<EntregadorViewModel>>(entregadores);
-
-            return View(entregadoresViewModel);
+            var models = _mapper.Map<List<EntregadorViewModel>>(entregadores);
+            return View(models);
         }
 
-        // GET: EntregadorController/Details/5
+        // GET: Entregador/Details/5
         public ActionResult Details(uint id)
         {
-            var entregador = _pessoaService.Get(id);
-
-            if (entregador == null || entregador.Papel != "E")
-            {
+            var pessoa = _pessoaService.Get(id);
+            if (pessoa == null || !PossuiPerfilEntregador(pessoa))
                 return NotFound();
-            }
 
-            var entregadorViewModel =
-                _mapper.Map<EntregadorViewModel>(entregador);
-
-            return View(entregadorViewModel);
+            return View(_mapper.Map<EntregadorViewModel>(pessoa));
         }
 
-        // GET: EntregadorController/Create
+        // O cadastro de entregador agora começa com dados pessoais e endereço
+        // no formulário compartilhado de solicitante.
+        // GET: Entregador/Create
         public ActionResult Create()
         {
-            var entregadorViewModel = new EntregadorViewModel();
-            return View(entregadorViewModel);
+            return RedirectToAction("Create", "Solicitante");
         }
 
-        // POST: EntregadorController/Create
+        // Rota antiga mantida para compatibilidade de assinatura.
+        // Não cria mais Pessoa incompleta (sem CEP/endereço) nem CPF duplicado.
+        // POST: Entregador/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(EntregadorViewModel entregadorViewModel)
+        public Task<ActionResult> Create(EntregadorViewModel entregadorViewModel)
         {
-            if (entregadorViewModel.DataNascimento == default ||
-                entregadorViewModel.DataNascimento.Date > DateTime.Today)
+            return Task.FromResult<ActionResult>(
+                RedirectToAction("Create", "Solicitante"));
+        }
+
+        // GET: Entregador/ConcluirCadastro
+        [HttpGet]
+        public IActionResult ConcluirCadastro()
+        {
+            var idSessao = HttpContext.Session.GetString("CadastroEntregadorPessoaId");
+            if (!uint.TryParse(idSessao, out uint idPessoa))
+                return RedirectToAction("Create", "Solicitante");
+
+            var pessoa = _pessoaService.Get(idPessoa);
+            if (pessoa == null || pessoa.Papel != "S" || pessoa.Status != "A")
             {
-                ModelState.AddModelError(
-                    nameof(entregadorViewModel.DataNascimento),
-                    "Informe uma data de nascimento válida.");
+                HttpContext.Session.Remove("CadastroEntregadorPessoaId");
+                return RedirectToAction("Create", "Solicitante");
             }
 
-            byte[]? documentoVeiculo = null;
+            return View(new DocumentacaoEntregadorViewModel());
+        }
 
-            if (entregadorViewModel.DocumentoVeiculo is null ||
-                entregadorViewModel.DocumentoVeiculo.Length == 0)
+        // POST: Entregador/ConcluirCadastro
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConcluirCadastro(
+            DocumentacaoEntregadorViewModel model)
+        {
+            var idSessao = HttpContext.Session.GetString("CadastroEntregadorPessoaId");
+            if (!uint.TryParse(idSessao, out uint idPessoa))
+                return RedirectToAction("Create", "Solicitante");
+
+            const long tamanhoMaximo = 5 * 1024 * 1024;
+            var arquivo = model.DocumentoVeiculo;
+
+            if (arquivo == null || arquivo.Length == 0)
             {
                 ModelState.AddModelError(
-                    nameof(entregadorViewModel.DocumentoVeiculo),
-                    "Envie o documento do veículo.");
+                    nameof(model.DocumentoVeiculo), "Envie o documento do veículo.");
             }
             else
             {
-                await using var memoryStream = new MemoryStream();
-                await entregadorViewModel.DocumentoVeiculo.CopyToAsync(memoryStream);
-                documentoVeiculo = memoryStream.ToArray();
-            }
+                if (arquivo.Length > tamanhoMaximo)
+                {
+                    ModelState.AddModelError(
+                        nameof(model.DocumentoVeiculo), "O documento deve ter no máximo 5 MB.");
+                }
 
-            // O Status é definido automaticamente pelo sistema.
-            ModelState.Remove(nameof(EntregadorViewModel.Status));
+                var extensao = Path.GetExtension(arquivo.FileName).ToLowerInvariant();
+                if (extensao != ".pdf" && extensao != ".jpg" &&
+                    extensao != ".jpeg" && extensao != ".png")
+                {
+                    ModelState.AddModelError(
+                        nameof(model.DocumentoVeiculo), "Envie PDF, JPG ou PNG.");
+                }
+            }
 
             if (!ModelState.IsValid)
-            {
-                return View(entregadorViewModel);
-            }
-
-            var entregador = new Pessoa
-            {
-                Nome = entregadorViewModel.Nome,
-                Cpf = entregadorViewModel.Cpf,
-                Email = entregadorViewModel.Email,
-                Telefone = entregadorViewModel.Telefone,
-                DataNascimento = entregadorViewModel.DataNascimento,
-                Cnh = entregadorViewModel.Cnh,
-                Veiculo = entregadorViewModel.Veiculo,
-                Placa = entregadorViewModel.Placa,
-                DocumentoVeiculo = documentoVeiculo,
-
-                Papel = "E",
-                Status = "P"
-            };
+                return View(model);
 
             try
             {
-                _pessoaService.Create(entregador);
-                return RedirectToAction(nameof(Index));
+                await using var memoria = new MemoryStream();
+                await arquivo!.CopyToAsync(memoria);
+
+                // A pessoa já existe: somente os dados do entregador
+                // e seu perfil pendente são adicionados pelo Service.
+                _pessoaService.SolicitarPerfilEntregador(
+                    idPessoa,
+                    model.Cnh,
+                    model.Veiculo,
+                    model.Placa,
+                    memoria.ToArray());
+
+                HttpContext.Session.Remove("CadastroEntregadorPessoaId");
+                return RedirectToAction(nameof(CadastroConcluido));
+            }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
             catch (DbUpdateException)
             {
                 ModelState.AddModelError(
-                    string.Empty,
-                    "Não foi possível cadastrar o entregador. " +
-                    "Verifique os dados e se CPF ou e-mail já estão cadastrados.");
-
-                return View(entregadorViewModel);
+                    string.Empty, "Não foi possível salvar o perfil de entregador.");
             }
+
+            return View(model);
         }
 
-        // GET: EntregadorController/Edit/5
+        // GET: Entregador/CadastroConcluido
+        [HttpGet]
+        public IActionResult CadastroConcluido()
+        {
+            return View();
+        }
+
+        // GET: Entregador/Edit/5
         public ActionResult Edit(uint id)
         {
-            var entregador = _pessoaService.Get(id);
-
-            if (entregador == null || entregador.Papel != "E")
-            {
+            var pessoa = _pessoaService.Get(id);
+            if (pessoa == null || !PossuiPerfilEntregador(pessoa))
                 return NotFound();
-            }
 
-            var entregadorViewModel =
-                _mapper.Map<EntregadorViewModel>(entregador);
-
-            return View(entregadorViewModel);
+            return View(_mapper.Map<EntregadorViewModel>(pessoa));
         }
 
-
-        // POST: EntregadorController/Edit/5
+        // POST: Entregador/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(uint id, 
-            EntregadorViewModel entregadorViewModel)
+        public async Task<ActionResult> Edit(uint id, EntregadorViewModel entregadorViewModel)
         {
-          
-                if (id != entregadorViewModel.Id)
-                {
-                    return BadRequest();
-                }
+            if (id != entregadorViewModel.Id)
+                return BadRequest();
 
-                // O Status não é editado pelo formulário.
-                ModelState.Remove(nameof(EntregadorViewModel.Status));
+            ModelState.Remove(nameof(EntregadorViewModel.Status));
+            // A substituição do documento é opcional durante a edição.
+            ModelState.Remove(nameof(EntregadorViewModel.DocumentoVeiculo));
 
-                if (!ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(entregadorViewModel);
+
+            var pessoa = _pessoaService.Get(id);
+            if (pessoa == null || !PossuiPerfilEntregador(pessoa))
+                return NotFound();
+
+            pessoa.Nome = entregadorViewModel.Nome;
+            pessoa.Cpf = entregadorViewModel.Cpf;
+            pessoa.Email = entregadorViewModel.Email;
+            pessoa.Telefone = entregadorViewModel.Telefone;
+            pessoa.DataNascimento = entregadorViewModel.DataNascimento;
+            pessoa.Cnh = entregadorViewModel.Cnh;
+            pessoa.Veiculo = entregadorViewModel.Veiculo;
+            pessoa.Placa = entregadorViewModel.Placa;
+
+            var arquivo = entregadorViewModel.DocumentoVeiculo;
+            if (arquivo != null && arquivo.Length > 0)
+            {
+                if (arquivo.Length > 5 * 1024 * 1024)
                 {
+                    ModelState.AddModelError(nameof(entregadorViewModel.DocumentoVeiculo),
+                        "O documento deve ter no máximo 5 MB.");
                     return View(entregadorViewModel);
                 }
 
-                var entregador = _pessoaService.Get(id);
-
-                if (entregador == null || entregador.Papel != "E")
+                var extensao = Path.GetExtension(arquivo.FileName).ToLowerInvariant();
+                if (extensao != ".pdf" && extensao != ".jpg" &&
+                    extensao != ".jpeg" && extensao != ".png")
                 {
-                    return NotFound();
+                    ModelState.AddModelError(nameof(entregadorViewModel.DocumentoVeiculo),
+                        "Envie PDF, JPG ou PNG.");
+                    return View(entregadorViewModel);
                 }
 
-            entregador.Nome = entregadorViewModel.Nome;
-            entregador.Cpf = entregadorViewModel.Cpf;
-            entregador.Email = entregadorViewModel.Email;
-            entregador.Telefone = entregadorViewModel.Telefone;
-            entregador.DataNascimento = entregadorViewModel.DataNascimento;
-            entregador.Cnh = entregadorViewModel.Cnh;
-            entregador.Veiculo = entregadorViewModel.Veiculo;
-            entregador.Placa = entregadorViewModel.Placa;
-            if (entregadorViewModel.DocumentoVeiculo is not null &&
-                entregadorViewModel.DocumentoVeiculo.Length > 0)
-            {
-                await using var memoryStream = new MemoryStream();
-                await entregadorViewModel.DocumentoVeiculo.CopyToAsync(memoryStream);
-                entregador.DocumentoVeiculo = memoryStream.ToArray();
+                await using var memoria = new MemoryStream();
+                await arquivo.CopyToAsync(memoria);
+                pessoa.DocumentoVeiculo = memoria.ToArray();
             }
 
-            _pessoaService.Edit(entregador);
-
-                return RedirectToAction(nameof(Index));
-            }
-
-        // GET: EntregadorController/Delete/5
-        public ActionResult Delete(uint id)
-        {
-            var entregador = _pessoaService.Get(id);
-
-            if (entregador == null || entregador.Papel != "E")
-            {
-                return NotFound();
-            }
-
-            var entregadorViewModel =
-                _mapper.Map<EntregadorViewModel>(entregador);
-
-            return View(entregadorViewModel);
+            _pessoaService.Edit(pessoa);
+            return RedirectToAction(nameof(Index));
         }
 
-        // POST: EntregadorController/Delete/5
+        // GET: Entregador/Delete/5
+        public ActionResult Delete(uint id)
+        {
+            var pessoa = _pessoaService.Get(id);
+            if (pessoa == null || !PossuiPerfilEntregador(pessoa))
+                return NotFound();
+
+            return View(_mapper.Map<EntregadorViewModel>(pessoa));
+        }
+
+        // POST: Entregador/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(uint id, IFormCollection collection)
         {
-            var entregador = _pessoaService.Get(id);
-
-            if (entregador == null || entregador.Papel != "E")
-            {
+            var pessoa = _pessoaService.Get(id);
+            if (pessoa == null || !PossuiPerfilEntregador(pessoa))
                 return NotFound();
-            }
 
-            // Desativação lógica: altera Status para "I".
+            // A operação legada Delete(id) desativa a Pessoa inteira.
+            // Por segurança, não a usamos para pessoas com perfil S + E.
+            // A desativação isolada de E será implementada no Service.
+            if (pessoa.Papel == "S")
+                return Conflict("A desativação isolada do perfil de entregador ainda precisa ser implementada.");
+
             _pessoaService.Delete(id);
-
             return RedirectToAction(nameof(Index));
         }
     }

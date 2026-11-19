@@ -25,6 +25,9 @@ public partial class BiPiEntregasContext : DbContext
 
     public virtual DbSet<Pessoa> Pessoas { get; set; }
 
+    // Falta o DbSet de PessoaPerfil, que é necessário para mapear a tabela pessoa_perfil no banco de dados.
+    // Foi adicionada por conta do relacionamento entre Pessoa e PessoaPerfil, onde uma Pessoa pode ter um ou mais perfis (Papel).
+    public virtual DbSet<PessoaPerfil> PessoaPerfis { get; set; }
     public virtual DbSet<Solicitacaoentrega> Solicitacaoentregas { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -232,8 +235,34 @@ public partial class BiPiEntregasContext : DbContext
                 .HasColumnName("veiculo");
         });
 
+        // NOVO BLOCO: Configuração de PessoaPerfil
+        modelBuilder.Entity<PessoaPerfil>(entity =>
+        {
+            entity.HasKey(e => new { e.IdPessoa, e.Papel });
+
+            entity.ToTable("pessoaperfil");
+
+            entity.Property(e => e.IdPessoa)
+                .HasColumnName("idPessoa");
+
+            entity.Property(e => e.Papel)
+                .HasColumnType("enum('S','E','A')")
+                .HasColumnName("papel");
+
+            entity.Property(e => e.Status)
+                .HasColumnType("enum('A','I','P')")
+                .HasColumnName("status");
+
+            entity.HasOne(e => e.Pessoa)
+                .WithMany(p => p.PessoaPerfis)
+                .HasForeignKey(e => e.IdPessoa)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_pessoaperfil_pessoa");
+        });
+
         modelBuilder.Entity<Solicitacaoentrega>(entity =>
         {
+
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("solicitacaoentrega");

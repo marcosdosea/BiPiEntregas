@@ -47,6 +47,9 @@ namespace BipiEntregasWeb.Models
         [StringLength(50)]
         public string? Complemento { get; set; }
 
+        // Indica se o solicitante também deseja ser entregador.
+        public bool DesejaSerEntregador { get; set; } = false;
+
         public string Status { get; set; } = string.Empty;
     }
 }
