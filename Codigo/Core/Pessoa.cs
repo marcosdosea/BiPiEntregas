@@ -50,7 +50,7 @@ public partial class Pessoa
     /// ADMINISTRADOR = A
     /// </summary>
     public string Papel { get; set; } = null!;
-
+    public virtual ICollection<PessoaPerfil> PessoaPerfis { get; set; } = new List<PessoaPerfil>();
     public virtual ICollection<Cartaocredito> Cartaocreditos { get; set; } = new List<Cartaocredito>();
 
     public virtual ICollection<Dadosbancario> Dadosbancarios { get; set; } = new List<Dadosbancario>();

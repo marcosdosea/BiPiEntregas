@@ -1,0 +1,80 @@
+﻿@model BipiEntregasWeb.Models.DocumentacaoEntregadorViewModel
+
+@{
+    ViewData["Title"] = "Documentação do Entregador";
+}
+
+<h1>Envio de documentos</h1>
+
+<p>
+    Seus dados pessoais e endereço já foram cadastrados.
+    Informe apenas os dados do entregador.
+</p>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-controller="Entregador"
+              asp-action="ConcluirCadastro"
+              method="post"
+              enctype="multipart/form-data">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Cnh" class="form-label">CNH</label>
+                <input asp-for="Cnh" class="form-control" />
+                <span asp-validation-for="Cnh"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Veiculo" class="form-label">Veículo</label>
+                <input asp-for="Veiculo" class="form-control" />
+                <span asp-validation-for="Veiculo"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Placa" class="form-label">Placa</label>
+                <input asp-for="Placa" class="form-control" />
+                <span asp-validation-for="Placa"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="DocumentoVeiculo" class="form-label">
+                    Documento do veículo
+                </label>
+                <input asp-for="DocumentoVeiculo"
+                       type="file"
+                       accept=".pdf,.jpg,.jpeg,.png"
+                       class="form-control" />
+                <span asp-validation-for="DocumentoVeiculo"
+                      class="text-danger"></span>
+                <small class="text-muted">
+                    PDF, JPG ou PNG. Máximo de 5 MB.
+                </small>
+            </div>
+
+            <div class="alert alert-info">
+                Seu cadastro de entregador ficará pendente de aprovação.
+                Seu perfil de solicitante continuará ativo.
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Enviar documentação
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

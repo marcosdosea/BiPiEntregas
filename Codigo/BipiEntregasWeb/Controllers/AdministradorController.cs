@@ -16,10 +16,11 @@ namespace BipiEntregasWeb.Controllers
         }
 
         [HttpGet]
+
+        [HttpGet]
         public ActionResult CadastrosPendentes()
         {
-            var cadastros = _pessoaService.GetAll("P")
-                .Where(pessoa => pessoa.Papel == "E")
+            var cadastros = _pessoaService.GetPendingDeliveryRegistrations()
                 .Select(pessoa => new CadastrosPendentesViewModel
                 {
                     Id = pessoa.Id,
@@ -36,6 +37,7 @@ namespace BipiEntregasWeb.Controllers
 
             return View(cadastros);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
