@@ -1,47 +1,50 @@
-﻿using Core;
+﻿
+using Core;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace Service
 {
     public class SolicitacaoEntregaService : ISolicitacaoEntregaService
     {
-        // Status da solicitação (enum da coluna status no banco)
-     
+        private readonly BiPiEntregasContext _context;
+
         private const string STATUS_PENDENTE = "PENDENTE";
         private const string STATUS_CANCELADA = "CANCELADA";
 
-        // Valores provisórios do frete (RF10 prevê cálculo por distância)
+        // Valores provisórios do frete.
         private const decimal TAXA_BASE_FRETE = 10.00m;
         private const decimal VALOR_POR_KG = 2.50m;
-
-        private readonly BiPiEntregasContext _context;
 
         public SolicitacaoEntregaService(BiPiEntregasContext context)
         {
             _context = context;
         }
 
-        // Criar uma nova solicitação de entrega (status inicial: Aguardando Entregador)
+        // CSU01 - Criar solicitação
         public uint Create(Solicitacaoentrega solicitacaoEntrega)
         {
             solicitacaoEntrega.Status = STATUS_PENDENTE;
             solicitacaoEntrega.DataCriacao = DateTime.Now;
             solicitacaoEntrega.IdEntregador = null;
-            solicitacaoEntrega.ValorFrete = CalculateShipping(solicitacaoEntrega.Peso);
+            solicitacaoEntrega.ValorFrete =
+                CalculateShipping(solicitacaoEntrega.Peso);
 
             _context.Solicitacaoentregas.Add(solicitacaoEntrega);
             _context.SaveChanges();
+
             return solicitacaoEntrega.Id;
         }
 
-        // Cancelar uma solicitação existente (só se ainda estiver aguardando entregador)
+        // CSU01 - Cancelar solicitação pendente
         public void Delete(uint id)
         {
-            var solicitacaoEntrega = _context.Solicitacaoentregas.Find(id);
+            var solicitacaoEntrega =
+                _context.Solicitacaoentregas.Find(id);
+
             if (solicitacaoEntrega != null)
             {
                 if (solicitacaoEntrega.Status != STATUS_PENDENTE)
@@ -55,7 +58,7 @@ namespace Service
             }
         }
 
-        // Editar uma solicitação existente (só se ainda estiver aguardando entregador)
+        // CSU01 - Editar solicitação
         public void Edit(Solicitacaoentrega solicitacaoEntrega)
         {
             if (solicitacaoEntrega.Status != STATUS_PENDENTE)
@@ -64,19 +67,20 @@ namespace Service
                     "Só é possível alterar solicitações aguardando entregador.");
             }
 
-            solicitacaoEntrega.ValorFrete = CalculateShipping(solicitacaoEntrega.Peso);
+            solicitacaoEntrega.ValorFrete =
+                CalculateShipping(solicitacaoEntrega.Peso);
 
             _context.Solicitacaoentregas.Update(solicitacaoEntrega);
             _context.SaveChanges();
         }
 
-        // Pegar uma solicitação pelo ID
+        // Consulta geral por ID - compatibilidade
         public Solicitacaoentrega? Get(uint id)
         {
             return _context.Solicitacaoentregas.Find(id);
         }
 
-        // Listar todas as solicitações (com o solicitante, para exibir o nome)
+        // Consulta geral - compatibilidade com Controller e testes
         public IEnumerable<Solicitacaoentrega> GetAll()
         {
             return _context.Solicitacaoentregas
@@ -84,27 +88,54 @@ namespace Service
                 .ToList();
         }
 
-        // Calcular o valor do frete a partir do peso (CSU01 - CalcularFrete)
+        // CSU05 - Consultar entregas de um solicitante
+        public IEnumerable<Solicitacaoentrega> GetBySolicitante(
+            uint idSolicitante)
+        {
+            return _context.Solicitacaoentregas
+                .AsNoTracking()
+                .Where(s => s.IdSolicitante == idSolicitante)
+                .OrderByDescending(s => s.DataCriacao)
+                .ToList();
+        }
+
+        // CSU05 - Consultar detalhes de uma entrega
+        // pertencente ao solicitante informado
+        public Solicitacaoentrega? GetByIdAndSolicitante(
+            uint idSolicitacao,
+            uint idSolicitante)
+        {
+            return _context.Solicitacaoentregas
+                .AsNoTracking()
+                .FirstOrDefault(s =>
+                    s.Id == idSolicitacao &&
+                    s.IdSolicitante == idSolicitante);
+        }
+
+        // CSU01 - Calcular frete
         public decimal CalculateShipping(decimal peso)
         {
             if (peso <= 0)
             {
-                throw new ArgumentException("O peso deve ser maior que zero.", nameof(peso));
+                throw new ArgumentException(
+                    "O peso deve ser maior que zero.",
+                    nameof(peso));
             }
 
-            return Math.Round(TAXA_BASE_FRETE + (peso * VALOR_POR_KG), 2);
+            return Math.Round(
+                TAXA_BASE_FRETE + (peso * VALOR_POR_KG), 2);
         }
 
-        // Avaliar uma entrega concluída com nota de 1 a 5 (CSU05 - A1, RF27)
-     
+        // CSU05 - Avaliar entrega
+        // Pendente de estrutura no banco de dados
         public void Assess(uint id, byte nota, string? comentario)
         {
             throw new NotImplementedException(
                 "Avaliação ainda não disponível: faltam as colunas no banco de dados.");
         }
 
-        // Reportar um problema na entrega (CSU05 - A2)
-   
+        // CSU05 - Reportar problema
+        // Pendente de estrutura no banco de dados
         public void ReportProblem(uint id, string descricao)
         {
             throw new NotImplementedException(
