@@ -227,5 +227,66 @@ namespace BipiEntregasWeb.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public ActionResult Acompanhar()
+        {
+            var idPessoa = HttpContext.Session.GetInt32("IdPessoa");
+
+            if (idPessoa == null || idPessoa <= 0)
+            {
+                return RedirectToAction("Login", "Pessoa");
+            }
+
+            if (HttpContext.Session.GetString("PerfilAtivo") != "S")
+            {
+                return StatusCode(403);
+            }
+
+            var solicitacoes = _solicitacaoEntregaService
+                .GetBySolicitante((uint)idPessoa.Value);
+
+            var model = _mapper
+                .Map<List<SolicitacaoEntregaViewModel>>(solicitacoes);
+
+            return View("Acompanhar", model);
+        }
+
+        // CSU05 - Consultar detalhes de uma entrega
+        [HttpGet]
+        public ActionResult AcompanharDetalhes(uint id)
+        {
+            var idPessoa = HttpContext.Session.GetInt32("IdPessoa");
+
+            if (idPessoa == null || idPessoa <= 0)
+            {
+                return RedirectToAction("Login", "Pessoa");
+            }
+
+            if (HttpContext.Session.GetString("PerfilAtivo") != "S")
+            {
+                return StatusCode(403);
+            }
+
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+
+            var solicitacao = _solicitacaoEntregaService
+                .GetByIdAndSolicitante(
+                    id,
+                    (uint)idPessoa.Value);
+
+            if (solicitacao == null)
+            {
+                return NotFound();
+            }
+
+            var model = _mapper
+                .Map<SolicitacaoEntregaViewModel>(solicitacao);
+
+            return View("AcompanharDetalhes", model);
+        }
     }
 }
