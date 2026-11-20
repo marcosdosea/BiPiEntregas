@@ -1,0 +1,112 @@
+﻿@model IEnumerable<BipiEntregasWeb.Models.SolicitacaoEntregaViewModel>
+@using System.Linq
+
+@{
+    ViewData["Title"] = "Acompanhar entregas";
+
+    var pedidos = Model?.OrderByDescending(p => p.DataCriacao).ToList()
+                  ?? new List<BipiEntregasWeb.Models.SolicitacaoEntregaViewModel>();
+
+    var emRota = pedidos.Count(p => p.Status == "EM_ANDAMENTO");
+    var entregues = pedidos.Count(p => p.Status == "CONCLUIDA");
+}
+
+<style>
+    .csu05-lista { max-width: 960px; margin: 0 auto; }
+    .csu05-lista .csu05-topo { border-bottom: 1px solid #e5e7eb; padding-bottom: 1.5rem; margin-bottom: 1.75rem; }
+    .csu05-lista .csu05-voltar { text-decoration: none; font-weight: 600; }
+    .csu05-lista .csu05-resumo { border: 1px solid #dee2e6; border-radius: .8rem; padding: 1.25rem; background: #fff; height: 100%; }
+    .csu05-lista .csu05-resumo strong { display: block; font-size: 2rem; line-height: 1.2; }
+    .csu05-lista .csu05-resumo span { color: #6c757d; }
+    .csu05-lista .csu05-pedido { border: 1px solid #dee2e6; border-radius: .8rem; padding: 1.5rem; background: #fff; margin-bottom: 1.2rem; }
+    .csu05-lista .csu05-endereco { color: #495057; margin-bottom: .45rem; overflow-wrap: anywhere; }
+    .csu05-lista .csu05-status { border-radius: 999px; padding: .38rem .75rem; font-size: .85rem; font-weight: 600; }
+    .csu05-lista .csu05-status-pendente { color: #805d00; background: #fff3cd; }
+    .csu05-lista .csu05-status-rota { color: #064aa0; background: #dbeafe; }
+    .csu05-lista .csu05-status-concluida { color: #146c43; background: #d1e7dd; }
+    .csu05-lista .csu05-status-cancelada { color: #842029; background: #f8d7da; }
+    .csu05-lista .csu05-progresso { height: .5rem; background: #e9ecef; border-radius: 999px; overflow: hidden; }
+    .csu05-lista .csu05-barra { height: 100%; background: #343a40; border-radius: 999px; }
+    .csu05-lista .csu05-descricao { color: #6c757d; margin-bottom: .8rem; }
+</style>
+
+<section class="csu05-lista pb-5" aria-labelledby="csu05-titulo">
+    <header class="csu05-topo">
+        <a class="csu05-voltar" asp-controller="Home" asp-action="Index">&larr; Voltar ao início</a>
+        <h1 class="h2 text-center mt-2 mb-1" id="csu05-titulo">Acompanhar</h1>
+        <p class="text-muted text-center mb-0">Seus pedidos</p>
+    </header>
+
+    <div class="row row-cols-1 row-cols-md-3 g-3 mb-4 text-center" aria-label="Resumo dos pedidos">
+        <div class="col"><div class="csu05-resumo"><strong>@pedidos.Count</strong><span>Total</span></div></div>
+        <div class="col"><div class="csu05-resumo"><strong>@emRota</strong><span>Em rota</span></div></div>
+        <div class="col"><div class="csu05-resumo"><strong>@entregues</strong><span>Entregues</span></div></div>
+    </div>
+
+    @if (pedidos.Count == 0)
+    {
+        <div class="alert alert-info" role="status">
+            Você ainda não possui solicitações de entrega para acompanhar.
+        </div>
+    }
+    else
+    {
+        @foreach (var pedido in pedidos)
+        {
+            var statusTexto = pedido.Status switch
+            {
+                "PENDENTE" => "Aguardando entregador",
+                "EM_ANDAMENTO" => "Em rota de entrega",
+                "CONCLUIDA" => "Entregue",
+                "CANCELADA" => "Cancelada",
+                _ => "Situação indisponível"
+            };
+
+            var classeStatus = pedido.Status switch
+            {
+                "PENDENTE" => "csu05-status-pendente",
+                "EM_ANDAMENTO" => "csu05-status-rota",
+                "CONCLUIDA" => "csu05-status-concluida",
+                "CANCELADA" => "csu05-status-cancelada",
+                _ => "csu05-status-pendente"
+            };
+
+            var etapa = pedido.Status switch
+            {
+                "PENDENTE" => 1,
+                "EM_ANDAMENTO" => 2,
+                "CONCLUIDA" => 3,
+                _ => 0
+            };
+            var percentual = etapa * 100 / 3;
+
+            <article class="csu05-pedido" aria-label="Pedido BIP-@pedido.Id">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                    <h2 class="h5 mb-0">BIP-@pedido.Id</h2>
+                    <span class="csu05-status @classeStatus">@statusTexto</span>
+                </div>
+
+                <div class="csu05-endereco"><strong>Origem:</strong> @pedido.RuaOrigem, @pedido.NumeroOrigem — @pedido.BairroOrigem, @pedido.CidadeOrigem</div>
+                <div class="csu05-endereco"><strong>Destino:</strong> @pedido.RuaDestino, @pedido.NumeroDestino — @pedido.BairroDestino, @pedido.CidadeDestino</div>
+                <div class="csu05-descricao mt-2"><strong>Encomenda:</strong> @pedido.DescricaoItem</div>
+
+                @if (pedido.Status != "CANCELADA")
+                {
+                    <div class="csu05-progresso" role="progressbar" aria-label="Progresso por status" aria-valuemin="0" aria-valuemax="100" aria-valuenow="@percentual">
+                        <div class="csu05-barra" style="width: @(percentual)%;"></div>
+                    </div>
+                }
+
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3">
+                    <span class="text-muted small">
+                        @(pedido.Status == "CANCELADA" ? "Pedido cancelado" : $"Etapa {etapa} de 3")
+                    </span>
+                    <a asp-controller="SolicitacaoEntrega"
+                       asp-action="AcompanharDetalhes"
+                       asp-route-id="@pedido.Id"
+                       class="btn btn-outline-dark">Ver detalhes</a>
+                </div>
+            </article>
+        }
+    }
+</section>
