@@ -7,6 +7,7 @@ using Core.Service;
 using BipiEntregasWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
@@ -74,6 +75,11 @@ public class PessoaControllerTests
                 Session = sessao
             }
         };
+
+        // TempData usado nas mensagens de confirmação (CSU11 - passo 5).
+        controller.TempData = new TempDataDictionary(
+            controller.ControllerContext.HttpContext,
+            Mock.Of<ITempDataProvider>());
     }
 
     // =========================================================
