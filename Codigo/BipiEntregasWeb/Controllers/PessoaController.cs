@@ -102,6 +102,7 @@ namespace BipiEntregasWeb.Controllers
             try
             {
                 _pessoaService.Create(pessoa);
+                TempData["Mensagem"] = "Cadastro realizado com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateException)
@@ -167,6 +168,7 @@ namespace BipiEntregasWeb.Controllers
             try
             {
                 _pessoaService.Edit(pessoa);
+                TempData["Mensagem"] = "Dados alterados com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateException)
@@ -211,6 +213,7 @@ namespace BipiEntregasWeb.Controllers
             // Desativação lógica: altera Status para "I".
             _pessoaService.Delete(id);
 
+            TempData["Mensagem"] = "Cadastro desativado com sucesso.";
             return RedirectToAction(nameof(Index));
         }
 
